@@ -4,21 +4,20 @@ services:
 
   registry:
     image: registry:${REGISTRY_VERSION:-2}
-    env_file: registry.env
     environment:
       - REGISTRY_AUTH=htpasswd
       - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
-      - REGISTRY_AUTH_HTPASSWD_REALM=${HTPASSWD_REALM-Realm}
+      - REGISTRY_AUTH_HTPASSWD_REALM=${REGISTRY_DOMAIN:-registry.localdomain}
     volumes:
       - docker-registry:/var/lib/registry
       - docker-registry-auth:/auth
     deploy:
       labels:
         - traefik.docker.network=proxy
-        - traefik.domain=${REGISTRY_DOMAIN}
+        - traefik.domain=${REGISTRY_DOMAIN:-registry.localdomain}
         - traefik.enable=true
         - traefik.port=5000
-        - traefik.frontend.rule=Host:${REGISTRY_DOMAIN}
+        - traefik.frontend.rule=Host:${REGISTRY_DOMAIN:-registry.localdomain}
       update_config:
         parallelism: 1
         delay: 10s
