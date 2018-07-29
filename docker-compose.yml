@@ -1,0 +1,39 @@
+version: '3.2'
+
+services:
+
+  registry:
+    image: registry:${REGISTRY_VERSION:-2}
+    env_file: registry.env
+    environment:
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=${HTPASSWD_REALM-Realm}
+    volumes:
+      - docker-registry:/var/lib/registry
+      - docker-registry-auth:/auth
+    deploy:
+      labels:
+        - traefik.docker.network=proxy
+        - traefik.domain=${REGISTRY_DOMAIN}
+        - traefik.enable=true
+        - traefik.port=5000
+        - traefik.frontend.rule=Host:${REGISTRY_DOMAIN}
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure            
+    networks:
+      - proxy
+
+volumes:
+  docker-registry:
+    external: true
+
+  docker-registry-auth:
+    external: true
+
+networks:
+  proxy:
+    external: true
