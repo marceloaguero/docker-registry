@@ -46,7 +46,29 @@ services:
         condition: on-failure            
     networks:
       - proxy
-    
+
+  manager:
+    image: snagles/docker-registry-manager
+    environment:
+      - MANAGER_PORT=8080
+      - MANAGER_REGISTRIES=/app/registries.yml
+      - MANAGER_LOG_LEVEL=warn
+    volumes:
+      - ./registries.yml:/app/registries.yml
+    deploy:
+      labels:
+        - traefik.docker.network=proxy
+        - traefik.domain=${REGISTRYMA_DOMAIN:-registryma.localdomain}
+        - traefik.enable=true
+        - traefik.port=8080
+        - traefik.frontend.rule=Host:${REGISTRYMA_DOMAIN:-registryma.localdomain}
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure            
+    networks:
+      - proxy
 
 volumes:
   docker-registry:
