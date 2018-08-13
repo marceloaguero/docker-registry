@@ -35,10 +35,10 @@ services:
     deploy:
       labels:
         - traefik.docker.network=proxy
-        - traefik.domain=${REGISTRYFE_DOMAIN:-registryfe.localdomain}
+        - traefik.domain=${REGISTRYFE_DOMAIN:-fe.registry.localdomain}
         - traefik.enable=true
         - traefik.port=80
-        - traefik.frontend.rule=Host:${REGISTRYFE_DOMAIN:-registryfe.localdomain}
+        - traefik.frontend.rule=Host:${REGISTRYFE_DOMAIN:-fe.registry.localdomain}
       update_config:
         parallelism: 1
         delay: 10s
@@ -58,11 +58,11 @@ services:
     deploy:
       labels:
         - traefik.docker.network=proxy
-        - traefik.domain=${REGISTRYMA_DOMAIN:-registryma.localdomain}
+        - traefik.domain=${REGISTRYMA_DOMAIN:-www.registry.localdomain}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.frontend.auth.basic=${AUTH_STRING}
-        - traefik.frontend.rule=Host:${REGISTRYMA_DOMAIN:-registryma.localdomain}
+        - traefik.frontend.rule=Host:${REGISTRYMA_DOMAIN:-www.registry.localdomain}
       update_config:
         parallelism: 1
         delay: 10s
